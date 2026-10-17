@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel CRM - Leads & Client Management</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="logo-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Mobile Backdrop Overlay -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="brand">
+        <div class="brand-logo-wrap" id="sidebar-brand-wrap">
+          <img src="logo.png" alt="Pixel CRM" class="sidebar-logo-img" id="sidebar-brand-img">
+        </div>
+        <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close Sidebar Menu">✕</button>
+      </div>
+
+      <!-- Sidebar Quick Search -->
+      <div class="sidebar-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="global-search-jump" placeholder="Search menu...">
+        <span class="sidebar-search-kbd">⌘ K</span>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-group-title">MAIN MENU</div>
+        <button class="nav-item active" data-tab="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item" data-tab="leads">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Leads Pipeline</span>
+          <span class="badge-count" id="nav-leads-count">199</span>
+        </button>
+
+        <button class="nav-item" data-tab="clients">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+          <span>Clients & Dues</span>
+          <span class="badge-count" id="nav-clients-count">2</span>
+        </button>
+
+
+        <div class="nav-group-title mt-3">STATUS QUICK JUMP</div>
+        <div class="quick-status-pills">
+          <button class="status-quick-pill" onclick="switchTab('leads'); document.getElementById('leads-filter-status').value='HOTTEST'; renderLeadsTable();">
+            <span class="dot dot-red"></span> HOTTEST
+          </button>
+          <button class="status-quick-pill" onclick="switchTab('leads'); document.getElementById('leads-filter-status').value='HOT'; renderLeadsTable();">
+            <span class="dot dot-orange"></span> HOT
+          </button>
+          <button class="status-quick-pill" onclick="switchTab('leads'); document.getElementById('leads-filter-status').value='WARM'; renderLeadsTable();">
+            <span class="dot dot-yellow"></span> WARM
+          </button>
+          <button class="status-quick-pill" onclick="switchTab('clients'); document.getElementById('clients-filter-status').value='PARTIAL'; renderClientsTable();">
+            <span class="dot dot-sky"></span> DUE BALANCES
+          </button>
+          <button class="status-quick-pill" onclick="switchTab('clients'); document.getElementById('clients-filter-status').value='PAID'; renderClientsTable();">
+            <span class="dot dot-green"></span> COMPLETED
+          </button>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div class="user-avatar" id="sidebar-user-avatar">
+            <span id="sidebar-user-initials">PL</span>
+          </div>
+          <div class="user-info">
+            <strong id="sidebar-user-name">Pixel Manager</strong>
+            <small id="sidebar-user-role">Admin Workspace</small>
+          </div>
+          <button class="btn-logout" id="btn-logout" title="Sign Out">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar matching reference -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title-row">
+            <button type="button" class="mobile-hamburger-btn" id="mobile-menu-btn" aria-label="Open Sidebar Menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="topbar-title-text">
+              <div class="breadcrumb">Workspace / <span id="top-breadcrumb-active">Dashboard</span></div>
+              <h1 id="page-title">Good Day, Pixel Team 👏</h1>
+            </div>
+          </div>
+          <p id="page-subtitle">Here is what is happening with your sales pipeline today</p>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-search-pill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="topbar-search" placeholder="Search clients, leads, or anything...">
+          </div>
+          <!-- Active Workspace Pill (Locked to Authenticated Account) -->
+          <div class="topbar-active-workspace" id="topbar-workspace-wrap" title="Active Account Workspace">
+            <div class="ws-badge-pill pixel" id="topbar-workspace-badge">
+              <img src="logo-icon.png" alt="Pixel Logo" class="topbar-ws-logo" id="ws-badge-img">
+              <span class="ws-name" id="ws-badge-name">Pixel Workspace</span>
+            </div>
+            <button type="button" class="ws-switch-account-btn" id="btn-switch-workspace" title="Switch Workspace (Requires Authentication)" onclick="handleSwitchAccountRequest()">
+              <span>Switch</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </button>
+          </div>
+          <div class="topbar-date-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span id="live-clock">Wed, Oct 14 03:38:03 PM</span>
+          </div>
+          <button class="topbar-bell-btn" title="3 Notifications" onclick="showToast('You have 3 hot lead follow-ups pending today.')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="bell-badge">3</span>
+          </button>
+          <div class="topbar-avatar" id="topbar-user-avatar" title="View Profile">
+            <img src="logo-icon.png" alt="Profile" class="avatar-cube-img" id="topbar-user-avatar-img">
+          </div>
+        </div>
+      </header>
+
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="view-dashboard" class="view-panel active">
+        <!-- Top Metrics Row: 6 White Cards (Left) + Dark Hero Gauge Card (Right) -->
+        <div class="hero-dashboard-row">
+          <!-- Left 6 Cards Grid (3x2) -->
+          <div class="hero-6-cards-grid">
+            <!-- Card 1: Total Leads -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-pink">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 id="metric-total-leads">199</h3>
+                  <span>Total Leads</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-up">↑ 12%</span>
+            </div>
+
+            <!-- Card 2: Won Clients -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-purple">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 id="metric-total-clients">2</h3>
+                  <span>Won Clients</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-up">↑ 8%</span>
+            </div>
+
+            <!-- Card 3: Hot Pipeline -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-orange">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 id="metric-hot-leads">1</h3>
+                  <span>Hot Pipeline</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-orange">↑ 5%</span>
+            </div>
+
+            <!-- Card 4: Total Deal Value -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-amber">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 id="metric-deal-amount">₹85,000</h3>
+                  <span>Total Deal Value</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-up">↑ 15%</span>
+            </div>
+
+            <!-- Card 5: Total Collected -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-green">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 class="text-success" id="metric-received-amount">₹50,000</h3>
+                  <span>Total Collected</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-up">↑ 20%</span>
+            </div>
+
+            <!-- Card 6: Remaining Due -->
+            <div class="stat-card">
+              <div class="stat-card-left">
+                <div class="stat-icon-square icon-red">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.2"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg>
+                </div>
+                <div class="stat-meta">
+                  <h3 class="text-danger" id="metric-due-amount">₹35,000</h3>
+                  <span>Remaining Due</span>
+                </div>
+              </div>
+              <span class="trend-pill trend-red">↑ 10%</span>
+            </div>
+          </div>
+
+          <!-- Right Dark Hero Card (33% Lead Win Rate with Golden Radial Ring & Mini Bar Chart) -->
+          <div class="hero-dark-card">
+            <!-- Crown Icon Top Left -->
+            <div class="hero-crown-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5"><polygon points="2 4 5 20 19 20 22 4 15 10 12 2 9 10 2 4"></polygon></svg>
+            </div>
+
+            <div class="hero-dark-body">
+              <!-- Radial Golden Gauge -->
+              <div class="hero-gauge-wrap">
+                <svg class="hero-gauge-svg" viewBox="0 0 140 140">
+                  <defs>
+                    <linearGradient id="goldRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fde68a" />
+                      <stop offset="50%" stop-color="#f59e0b" />
+                      <stop offset="100%" stop-color="#d97706" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="hero-gauge-bg" cx="70" cy="70" r="54" stroke-width="10" fill="none" stroke="rgba(255,255,255,0.08)"/>
+                  <circle class="hero-gauge-fill" id="gauge-circle-fill" cx="70" cy="70" r="54" stroke-width="10" fill="none" stroke="url(#goldRingGradient)" stroke-dasharray="339" stroke-dashoffset="227" stroke-linecap="round"/>
+                </svg>
+                <div class="hero-gauge-center">
+                  <span class="hero-gauge-number" id="gauge-percent">33%</span>
+                  <span class="hero-gauge-label">LEAD WIN RATE</span>
+                </div>
+              </div>
+
+              <!-- Right Info: Trend + Mini Glowing Bar Sparkline -->
+              <div class="hero-gauge-sidebar">
+                <div class="hero-trend-badge">
+                  <span class="trend-pill trend-up">↑ +8%</span>
+                  <span class="hero-trend-caption">from last month</span>
+                </div>
+                <!-- Glowing Golden Mini Vertical Bars -->
+                <div class="hero-mini-bars">
+                  <div class="mini-bar" style="height: 30%;"></div>
+                  <div class="mini-bar" style="height: 48%;"></div>
+                  <div class="mini-bar" style="height: 40%;"></div>
+                  <div class="mini-bar" style="height: 65%;"></div>
+                  <div class="mini-bar" style="height: 85%;"></div>
+                  <div class="mini-bar" style="height: 100%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Golden Ambient Bottom Glow Wave -->
+            <div class="hero-dark-glow-wave"></div>
+          </div>
+        </div>
+
+        <!-- Middle Row: Priority Lead Spotlight Banner (Left) + Pipeline Stage Distribution (Right) -->
+        <div class="dashboard-middle-row">
+          <!-- Spotlight Banner matching yellow/peach gradient reference -->
+          <div class="spotlight-card" id="dashboard-spotlight">
+            <div class="spotlight-inner">
+              <div class="spotlight-left-content">
+                <div class="spotlight-header-row">
+                  <div class="spotlight-badge">🔥 Priority Lead Spotlight</div>
+                  <div class="spotlight-nav-arrows">
+                    <button class="spot-arrow-btn" onclick="showToast('Browsing prior priority lead')">&lsaquo;</button>
+                    <button class="spot-arrow-btn" onclick="showToast('Browsing next priority lead')">&rsaquo;</button>
+                  </div>
+                </div>
+
+                <div class="spotlight-company-row">
+                  <div class="spotlight-avatar-box">
+                    <span id="spotlight-avatar-letter">R</span>
+                  </div>
+                  <div class="spotlight-company-info">
+                    <div class="spotlight-title-wrap">
+                      <h3 id="spotlight-title">Rahman Fashion House</h3>
+                      <span class="spotlight-new-pill">New</span>
+                    </div>
+                    <span class="spotlight-sub-name" id="spotlight-contact-name">— Kamal Rahman</span>
+                  </div>
+                </div>
+
+                <p class="spotlight-quote" id="spotlight-desc">“Requested product demo next Tuesday at 3 PM.”</p>
+
+                <div class="spotlight-meta-tags" id="spotlight-meta">
+                  <span class="meta-tag-pill">📞 01819-556677</span>
+                  <span class="meta-tag-pill">🏷️ Software / CRM Solution (One-Time)</span>
+                </div>
+
+                <div class="spotlight-action-row">
+                  <button class="btn-dark-pill" onclick="switchTab('leads')">
+                    View in Pipeline &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Illustration: Isometric Target with Arrow & Gold Bars -->
+              <div class="spotlight-illustration-wrap">
+                <svg class="spotlight-target-svg" width="170" height="120" viewBox="0 0 170 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Ground Shadow -->
+                  <ellipse cx="75" cy="100" rx="60" ry="14" fill="#f59e0b" opacity="0.12"/>
+                  <!-- Target Back Shadow -->
+                  <ellipse cx="72" cy="62" rx="42" ry="28" fill="#d97706" opacity="0.25"/>
+                  <!-- Outer Yellow Ring -->
+                  <ellipse cx="70" cy="58" rx="42" ry="28" fill="#f59e0b"/>
+                  <!-- Outer White Ring -->
+                  <ellipse cx="70" cy="58" rx="34" ry="22" fill="#ffffff"/>
+                  <!-- Middle Amber Ring -->
+                  <ellipse cx="70" cy="58" rx="26" ry="16" fill="#f59e0b"/>
+                  <!-- Inner White Ring -->
+                  <ellipse cx="70" cy="58" rx="18" ry="11" fill="#ffffff"/>
+                  <!-- Bullseye Orange Center -->
+                  <ellipse cx="70" cy="58" rx="10" ry="6" fill="#ea580c"/>
+                  <!-- Target Stand Legs -->
+                  <path d="M46 76L54 62M94 76L86 62M70 82V64" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+                  <!-- Dart / Arrow in Bullseye -->
+                  <path d="M102 28L72 56" stroke="#78350f" stroke-width="3.5" stroke-linecap="round"/>
+                  <polygon points="69,59 78,55 73,50" fill="#ea580c"/>
+                  <path d="M102 28L108 22M102 28L110 30M102 28L100 20" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"/>
+                  <!-- 3 Rising Gold Chart Bars -->
+                  <rect x="122" y="70" width="10" height="16" rx="3" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+                  <rect x="136" y="58" width="10" height="28" rx="3" fill="#fcd34d" stroke="#f59e0b" stroke-width="1.5"/>
+                  <rect x="150" y="44" width="10" height="42" rx="3" fill="#f59e0b" stroke="#d97706" stroke-width="1.5"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Pipeline Stage Distribution matching 4 colored cards -->
+          <div class="card stage-distribution-card">
+            <div class="card-header-clean">
+              <h3>Pipeline Stage Distribution</h3>
+              <div class="dropdown-trigger">
+                <span>Active Overview</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
+            </div>
+
+            <!-- 4 Stage Rounded Vertical Pill Cards -->
+            <div class="stage-cards-grid">
+              <!-- Card 1: Red (Hot/Hottest) -->
+              <div class="stage-metric-col">
+                <div class="stage-pill-box box-red">
+                  <span id="stage-count-hot">1</span>
+                </div>
+                <span class="stage-pill-title">Hot/Hottest</span>
+                <span class="stage-pill-pct" id="stage-pct-hot">25%</span>
+                <div class="stage-track-line">
+                  <div class="stage-track-fill fill-red" id="stage-track-hot" style="width: 25%;"></div>
+                </div>
+              </div>
+
+              <!-- Card 2: Navy (Warm/Cold) -->
+              <div class="stage-metric-col">
+                <div class="stage-pill-box box-navy">
+                  <span id="stage-count-warm">2</span>
+                </div>
+                <span class="stage-pill-title">Warm/Cold</span>
+                <span class="stage-pill-pct" id="stage-pct-warm">50%</span>
+                <div class="stage-track-line">
+                  <div class="stage-track-fill fill-navy" id="stage-track-warm" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Card 3: Green (Won Clients) -->
+              <div class="stage-metric-col">
+                <div class="stage-pill-box box-green">
+                  <span id="stage-count-won">2</span>
+                </div>
+                <span class="stage-pill-title">Won Clients</span>
+                <span class="stage-pill-pct" id="stage-pct-won">50%</span>
+                <div class="stage-track-line">
+                  <div class="stage-track-fill fill-green" id="stage-track-won" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Card 4: Light Gray (Due Balance) -->
+              <div class="stage-metric-col">
+                <div class="stage-pill-box box-gray">
+                  <span id="stage-count-due">1</span>
+                </div>
+                <span class="stage-pill-title">Due Balance</span>
+                <span class="stage-pill-pct" id="stage-pct-due">25%</span>
+                <div class="stage-track-line">
+                  <div class="stage-track-fill fill-red" id="stage-track-due" style="width: 25%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Dual Tables matching reference layout -->
+        <div class="dashboard-split">
+          <!-- Left Table: High Priority Leads (Hot / Hottest) -->
+          <div class="card table-subtle-card">
+            <div class="card-header">
+              <div class="header-with-icon">
+                <span class="header-icon-badge icon-orange">🔥</span>
+                <h3>High Priority Leads (Hot / Hottest)</h3>
+              </div>
+              <button class="btn-link" onclick="switchTab('leads')">View All Leads &rarr;</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>COMPANY</th>
+                    <th>CONTACT</th>
+                    <th>REQUIREMENT</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-leads-table">
+                  <!-- Populated dynamically by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Table: Recent Clients & Due Status -->
+          <div class="card table-subtle-card">
+            <div class="card-header">
+              <div class="header-with-icon">
+                <span class="header-icon-badge icon-purple">👥</span>
+                <h3>Recent Clients & Due Status</h3>
+              </div>
+              <button class="btn-link" onclick="switchTab('clients')">View All Clients &rarr;</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>COMPANY</th>
+                    <th>CONTACT</th>
+                    <th>DEAL AMOUNT</th>
+                    <th>REMAINING DUE</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-clients-table">
+                  <!-- Populated dynamically by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. LEADS VIEW -->
+      <section id="view-leads" class="view-panel">
+        <div class="panel-header">
+          <div class="filter-group">
+            <div class="search-input-wrap">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="leads-search" placeholder="Search company, contact name, phone...">
+            </div>
+
+            <select id="leads-filter-status" class="form-select filter-select">
+              <option value="ALL">All Statuses</option>
+              <option value="HOTTEST">HOTTEST (Green)</option>
+              <option value="HOT">HOT (Orange)</option>
+              <option value="WARM">WARM (Yellow)</option>
+              <option value="COLD">COLD (Sky)</option>
+              <option value="LOST">LOST (Red)</option>
+              <option value="WON">WON</option>
+            </select>
+
+            <select id="leads-filter-req" class="form-select filter-select">
+              <option value="ALL">All Requirements</option>
+              <!-- Filled by JS -->
+            </select>
+
+            <select id="leads-filter-type" class="form-select filter-select">
+              <option value="ALL">All Types</option>
+              <option value="One-Time">One-Time</option>
+              <option value="Regular">Regular (Recurring)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="btn-open-lead-modal">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Add New Lead</span>
+          </button>
+        </div>
+
+        <div class="card table-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Company</th>
+                  <th>Contact Name</th>
+                  <th>Contact Number</th>
+                  <th>Requirement</th>
+                  <th>Type</th>
+                  <th>Comment</th>
+                  <th>Client?</th>
+                  <th>Status</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="leads-table-body">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="leads-empty-state" class="empty-state hidden">
+            <p>No leads found matching your criteria.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CLIENTS VIEW -->
+      <section id="view-clients" class="view-panel">
+        <div class="panel-header">
+          <div class="filter-group">
+            <div class="search-input-wrap">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="clients-search" placeholder="Search client company, contact, phone...">
+            </div>
+
+            <select id="clients-filter-status" class="form-select filter-select">
+              <option value="ALL">All Payment Statuses</option>
+              <option value="PAID">Fully Paid</option>
+              <option value="PARTIAL">Partial Due</option>
+              <option value="UNPAID">Unpaid</option>
+            </select>
+
+            <select id="clients-filter-type" class="form-select filter-select">
+              <option value="ALL">All Types</option>
+              <option value="One-Time">One-Time</option>
+              <option value="Regular">Regular (Recurring)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="btn-open-client-modal">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Add Direct Client</span>
+          </button>
+        </div>
+
+        <div class="card table-card">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Company</th>
+                  <th>Contact Name</th>
+                  <th>Contact Number</th>
+                  <th>Requirement</th>
+                  <th>Type</th>
+                  <th>Became Client At</th>
+                  <th>Deal Amount</th>
+                  <th>Total Paid</th>
+                  <th>Remaining Due</th>
+                  <th>Status</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="clients-table-body">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="clients-empty-state" class="empty-state hidden">
+            <p>No client records found.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT LEAD -->
+  <div class="modal-backdrop" id="modal-lead">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-lead-title">Add New Lead</h3>
+        <button class="modal-close" id="btn-close-lead-modal">&times;</button>
+      </div>
+      <form id="form-lead">
+        <input type="hidden" id="lead-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="lead-company">Company Name <span class="required">*</span></label>
+            <input type="text" id="lead-company" class="form-input" placeholder="e.g. Acme Corporation" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lead-contact-name">Contact Name <span class="required">*</span></label>
+              <input type="text" id="lead-contact-name" class="form-input" placeholder="e.g. John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="lead-contact-number">Contact Number <span class="required">*</span></label>
+              <input type="text" id="lead-contact-number" class="form-input" placeholder="e.g. 01700-000000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lead-requirement">Requirement <span class="required">*</span></label>
+            <select id="lead-requirement" class="form-select" required>
+              <option value="" disabled selected>-- Select Service / Requirement --</option>
+              <option value="Logo Design">Logo Design</option>
+              <option value="Corporate Brochure">Corporate Brochure</option>
+              <option value="Branding Guidelines">Branding Guidelines</option>
+              <option value="Business Card Design">Business Card Design</option>
+              <option value="Banner Design">Banner Design</option>
+              <option value="Pamphlet / Flyer Design">Pamphlet / Flyer Design</option>
+              <option value="Flex / Standee Design">Flex / Standee Design</option>
+              <option value="Facebook Page Creation">Facebook Page Creation</option>
+              <option value="Instagram Page Creation">Instagram Page Creation</option>
+              <option value="LinkedIn Page Creation">LinkedIn Page Creation</option>
+              <option value="YouTube Channel Creation">YouTube Channel Creation</option>
+              <option value="Google Business Profile">Google Business Profile</option>
+              <option value="Basic Website">Basic Website</option>
+              <option value="Bigger Websites">Bigger Websites</option>
+              <option value="Web Application">Web Application</option>
+              <option value="Website Maintenance">Website Maintenance</option>
+              <option value="Search Engine Optimization (SEO)">Search Engine Optimization (SEO)</option>
+              <option value="E-Commerce">E-Commerce</option>
+              <option value="Mobile App Development">Mobile App Development</option>
+              <option value="SaaS & CRM Systems">SaaS & CRM Systems</option>
+              <option value="WhatsApp Marketing">WhatsApp Marketing</option>
+              <option value="Email Marketing">Email Marketing</option>
+              <option value="Social Media (Organic)">Social Media (Organic)</option>
+              <option value="AI Influencer">AI Influencer</option>
+              <option value="Meta / Google Advertisement">Meta / Google Advertisement</option>
+              <option value="Live Calling AI Agents (24/7)">Live Calling AI Agents (24/7)</option>
+              <option value="LinkedIn Ads & B2B Marketing">LinkedIn Ads & B2B Marketing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lead-deal-type">Type <span class="required">*</span></label>
+              <select id="lead-deal-type" class="form-select" required>
+                <option value="One-Time" selected>One-Time</option>
+                <option value="Regular">Regular</option>
+              </select>
+            </div>
+            <div class="form-group" id="lead-cycle-group" style="display: none;">
+              <label for="lead-recurring-cycle">Recurring Cycle <span class="required">*</span></label>
+              <select id="lead-recurring-cycle" class="form-select">
+                <option value="Monthly">Monthly (1 Month)</option>
+                <option value="Quarterly" selected>Quarterly (3 Months)</option>
+                <option value="Half-Yearly">Half-Yearly (6 Months)</option>
+                <option value="Yearly">Yearly (1 Year - Max)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lead-comment">Comment / Notes</label>
+            <textarea id="lead-comment" class="form-textarea" rows="3" placeholder="Enter follow-up details, client interest or remarks..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lead-status">Status <span class="required">*</span></label>
+              <select id="lead-status" class="form-select" required>
+                <option value="WARM">WARM (Yellow)</option>
+                <option value="HOT">HOT (Orange)</option>
+                <option value="HOTTEST">HOTTEST (Green)</option>
+                <option value="COLD">COLD (Sky)</option>
+                <option value="LOST">LOST (Red)</option>
+                <option value="WON">WON (Convert to Client)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Client Status</label>
+              <div class="read-only-badge" id="lead-client-flag-display">No (Lead)</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-lead">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-lead">Save Lead</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: WON CONFIRMATION & CLIENT CONVERSION ALERT -->
+  <div class="modal-backdrop" id="modal-won-confirm">
+    <div class="modal-box modal-box-alert">
+      <div class="alert-icon-wrap">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="text-success">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h3 class="alert-title">Are you sure he/she is your new client?</h3>
+      <p class="alert-desc" id="won-lead-summary">
+        Converting this lead will record them into the <strong>Clients</strong> table with current timestamp and remove from Leads.
+      </p>
+
+      <div class="conversion-form-box">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="won-deal-type">Type <span class="required">*</span></label>
+            <select id="won-deal-type" class="form-select">
+              <option value="One-Time">One-Time</option>
+              <option value="Regular">Regular</option>
+            </select>
+          </div>
+          <div class="form-group" id="won-cycle-group" style="display: none;">
+            <label for="won-recurring-cycle">Recurring Cycle <span class="required">*</span></label>
+            <select id="won-recurring-cycle" class="form-select">
+              <option value="Monthly">Monthly (1 Month)</option>
+              <option value="Quarterly">Quarterly (3 Months)</option>
+              <option value="Half-Yearly">Half-Yearly (6 Months)</option>
+              <option value="Yearly">Yearly (1 Year)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="won-deal-amount">Total Agreed Deal Amount (₹) <span class="required">*</span></label>
+          <input type="number" id="won-deal-amount" class="form-input" placeholder="e.g. 50000" min="0" step="any" required>
+        </div>
+        <div class="form-group">
+          <label for="won-initial-payment">Initial Payment Received (Optional ₹)</label>
+          <input type="number" id="won-initial-payment" class="form-input" placeholder="e.g. 10000 (Leave 0 if unpaid yet)" min="0" step="any" value="0">
+        </div>
+      </div>
+
+      <div class="alert-actions">
+        <button type="button" class="btn btn-secondary btn-lg" id="btn-won-no">N (No, Cancel)</button>
+        <button type="button" class="btn btn-success btn-lg" id="btn-won-yes">Y (Yes, Confirm Client!)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT DIRECT CLIENT -->
+  <div class="modal-backdrop" id="modal-client">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-client-title">Add New Client</h3>
+        <button class="modal-close" id="btn-close-client-modal">&times;</button>
+      </div>
+      <form id="form-client">
+        <input type="hidden" id="client-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="client-company">Company Name <span class="required">*</span></label>
+            <input type="text" id="client-company" class="form-input" placeholder="e.g. Global Tech" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client-contact-name">Contact Name <span class="required">*</span></label>
+              <input type="text" id="client-contact-name" class="form-input" placeholder="e.g. Rahim Ali" required>
+            </div>
+            <div class="form-group">
+              <label for="client-contact-number">Contact Number <span class="required">*</span></label>
+              <input type="text" id="client-contact-number" class="form-input" placeholder="e.g. 01800-000000" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="client-requirement">Requirement <span class="required">*</span></label>
+            <select id="client-requirement" class="form-select" required>
+              <option value="" disabled selected>-- Select Service / Requirement --</option>
+              <option value="Logo Design">Logo Design</option>
+              <option value="Corporate Brochure">Corporate Brochure</option>
+              <option value="Branding Guidelines">Branding Guidelines</option>
+              <option value="Business Card Design">Business Card Design</option>
+              <option value="Banner Design">Banner Design</option>
+              <option value="Pamphlet / Flyer Design">Pamphlet / Flyer Design</option>
+              <option value="Flex / Standee Design">Flex / Standee Design</option>
+              <option value="Facebook Page Creation">Facebook Page Creation</option>
+              <option value="Instagram Page Creation">Instagram Page Creation</option>
+              <option value="LinkedIn Page Creation">LinkedIn Page Creation</option>
+              <option value="YouTube Channel Creation">YouTube Channel Creation</option>
+              <option value="Google Business Profile">Google Business Profile</option>
+              <option value="Basic Website">Basic Website</option>
+              <option value="Bigger Websites">Bigger Websites</option>
+              <option value="Web Application">Web Application</option>
+              <option value="Website Maintenance">Website Maintenance</option>
+              <option value="Search Engine Optimization (SEO)">Search Engine Optimization (SEO)</option>
+              <option value="E-Commerce">E-Commerce</option>
+              <option value="Mobile App Development">Mobile App Development</option>
+              <option value="SaaS & CRM Systems">SaaS & CRM Systems</option>
+              <option value="WhatsApp Marketing">WhatsApp Marketing</option>
+              <option value="Email Marketing">Email Marketing</option>
+              <option value="Social Media (Organic)">Social Media (Organic)</option>
+              <option value="AI Influencer">AI Influencer</option>
+              <option value="Meta / Google Advertisement">Meta / Google Advertisement</option>
+              <option value="Live Calling AI Agents (24/7)">Live Calling AI Agents (24/7)</option>
+              <option value="LinkedIn Ads & B2B Marketing">LinkedIn Ads & B2B Marketing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client-deal-type">Type <span class="required">*</span></label>
+              <select id="client-deal-type" class="form-select" required>
+                <option value="One-Time" selected>One-Time</option>
+                <option value="Regular">Regular</option>
+              </select>
+            </div>
+            <div class="form-group" id="client-cycle-group" style="display: none;">
+              <label for="client-recurring-cycle">Recurring Cycle <span class="required">*</span></label>
+              <select id="client-recurring-cycle" class="form-select">
+                <option value="Monthly">Monthly (1 Month)</option>
+                <option value="Quarterly" selected>Quarterly (3 Months)</option>
+                <option value="Half-Yearly">Half-Yearly (6 Months)</option>
+                <option value="Yearly">Yearly (1 Year - Max)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="client-deal-amount">Total Deal Amount (₹) <span class="required">*</span></label>
+            <input type="number" id="client-deal-amount" class="form-input" placeholder="e.g. 60000" min="0" step="any" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-client">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-client">Save Client</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD PAYMENT INSTALLMENT -->
+  <div class="modal-backdrop" id="modal-payment">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Record Payment Installment</h3>
+        <button class="modal-close" id="btn-close-payment-modal">&times;</button>
+      </div>
+      <form id="form-payment">
+        <input type="hidden" id="payment-client-id">
+        <div class="modal-body">
+          <div class="payment-client-banner">
+            <h4 id="pay-banner-client-name">Company Name</h4>
+            <div class="payment-stats-pill">
+              <div>Total Deal: <strong id="pay-banner-deal">₹0</strong></div>
+              <div>Already Paid: <strong class="text-success" id="pay-banner-paid">₹0</strong></div>
+              <div>Remaining Due: <strong class="text-danger" id="pay-banner-due">₹0</strong></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="payment-amount">Payment Amount (₹) <span class="required">*</span></label>
+            <input type="number" id="payment-amount" class="form-input" placeholder="e.g. 10000 or 5000" min="1" step="any" required>
+            <small class="field-hint">Enter the installment amount received today (e.g. 1st 10, then 5).</small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="payment-date">Date Received <span class="required">*</span></label>
+              <input type="date" id="payment-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="payment-method">Payment Method</label>
+              <select id="payment-method" class="form-select">
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="bKash / Nagad">bKash / Nagad</option>
+                <option value="Cash">Cash</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Credit Card">Credit Card</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="payment-note">Payment Note (Optional)</label>
+            <input type="text" id="payment-note" class="form-input" placeholder="e.g. 1st installment / Advance payment">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-payment">Cancel</button>
+          <button type="submit" class="btn btn-success" id="btn-save-payment">Confirm & Add Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PAYMENT HISTORY DETAILS -->
+  <div class="modal-backdrop" id="modal-history">
+    <div class="modal-box modal-box-large">
+      <div class="modal-header">
+        <div>
+          <h3 id="history-modal-client-name">Client Payment Breakdown</h3>
+          <p class="history-sub" id="history-modal-client-info"></p>
+        </div>
+        <button class="modal-close" id="btn-close-history-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-metrics">
+          <div class="h-card">
+            <span>Total Agreed Deal</span>
+            <strong id="h-total-deal">₹0</strong>
+          </div>
+          <div class="h-card">
+            <span>Total Paid (Summed)</span>
+            <strong class="text-success" id="h-total-paid">₹0</strong>
+          </div>
+          <div class="h-card">
+            <span>Remaining Balance (Due)</span>
+            <strong class="text-danger" id="h-total-due">₹0</strong>
+          </div>
+        </div>
+
+        <h4 class="mt-4 mb-2">Installment Payment History</h4>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount Paid</th>
+                <th>Method</th>
+                <th>Note</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-close-history">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH OVERLAY: SIGN IN & SIGN UP -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo-wrap" id="auth-logo-wrap">
+          <img src="logo.png" alt="Pixel CRM Logo" class="auth-logo-img" id="auth-brand-logo">
+        </div>
+        <span id="auth-modal-sub" class="auth-brand-sub">Your Digital Destination</span>
+      </div>
+
+      <!-- Workspace Options: Boutique or Pixel -->
+      <div class="auth-brand-selector">
+        <span class="brand-choice-label">Choose Workspace / Brand</span>
+        <div class="brand-choice-grid">
+          <button type="button" class="brand-choice-pill active" id="brand-opt-pixel" onclick="selectAuthBrand('Pixel')">
+            <span class="choice-icon"><img src="logo-icon.png" alt="Pixel" class="brand-opt-logo"></span>
+            <span class="choice-name">Pixel</span>
+          </button>
+          <button type="button" class="brand-choice-pill" id="brand-opt-boutique" onclick="selectAuthBrand('Boutique')">
+            <span class="choice-icon">✨</span>
+            <span class="choice-name">Boutique</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Auth Switcher Tabs -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-btn-signin">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tab-btn-signup">Sign Up</button>
+      </div>
+
+      <!-- 1. SIGN IN FORM (Number & Password) -->
+      <form id="form-signin" class="auth-form active">
+        <div class="form-group">
+          <label for="signin-phone">Phone / Mobile Number <span class="required">*</span></label>
+          <div class="input-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <input type="tel" id="signin-phone" class="form-input" placeholder="e.g. 9830012345" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signin-password">Password <span class="required">*</span></label>
+          <div class="input-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="signin-password" class="form-input" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <div class="auth-row-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="signin-remember" checked>
+            <span>Remember me</span>
+          </label>
+          <div class="auth-links-group">
+            <button type="button" class="auth-forgot-btn" onclick="openForgotView()">Forgot Password?</button>
+            <span class="auth-link-sep">•</span>
+            <button type="button" class="auth-hint-btn" onclick="quickFillAdmin()">Fill Demo</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-auth" id="btn-submit-signin">
+          <span>Sign In to Pixel &rarr;</span>
+        </button>
+
+        <div class="quick-demo-pill" id="quick-demo-pill" onclick="quickFillAdmin()">
+          <span id="quick-demo-pill-text">⚡ Quick Fill: <strong>9830012345</strong> / <strong>admin</strong> (Pixel)</span>
+        </div>
+      </form>
+
+      <!-- 2. SIGN UP FORM (Number & Password) -->
+      <form id="form-signup" class="auth-form">
+        <div class="form-group">
+          <label for="signup-phone">Phone / Mobile Number <span class="required">*</span></label>
+          <div class="input-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <input type="tel" id="signup-phone" class="form-input" placeholder="Enter mobile number" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Password <span class="required">*</span></label>
+          <div class="input-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input type="password" id="signup-password" class="form-input" placeholder="Create password (min 4 chars)" minlength="4" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-with-action">
+            <label for="signup-secret-code">Company Secret Code <span class="required">*</span></label>
+            <button type="button" class="auth-hint-btn auth-code-action-link" onclick="openChangeSecretModal()">Owner? Change Code / Number</button>
+          </div>
+          <div class="input-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+            <input type="text" id="signup-secret-code" class="form-input" placeholder="Enter company code (e.g. pixelcrm)" required>
+          </div>
+          <small class="field-hint" id="signup-secret-hint">Secret code provided by business owner to join Pixel.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-auth" id="btn-submit-signup">
+          <span>Create Pixel Account & Enter &rarr;</span>
+        </button>
+      </form>
+
+      <!-- 3. FORGOT PASSWORD FORM (SMART IN-APP OTP RESET) -->
+      <form id="form-forgot" class="auth-form">
+        <!-- Step 1: Input Registered Mobile -->
+        <div id="forgot-step-phone">
+          <div class="form-group">
+            <label for="forgot-phone">Registered Mobile Number <span class="required">*</span></label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <input type="tel" id="forgot-phone" class="form-input" placeholder="e.g. 9830012345" required>
+            </div>
+            <small class="field-hint">We will generate an instant verification OTP for this account.</small>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-auth" id="btn-send-otp" onclick="handleSendOtp()">
+            <span>Send Verification OTP &rarr;</span>
+          </button>
+        </div>
+
+        <!-- Step 2: Enter OTP & Set New Password -->
+        <div id="forgot-step-verify" style="display: none;">
+          <div class="otp-alert-card" id="otp-alert-card">
+            <div class="otp-alert-header">
+              <span class="otp-badge">📲 SIMULATED SMS</span>
+              <button type="button" class="btn-copy-otp" onclick="autoFillOtp()" title="Click to fill automatically">
+                ⚡ Auto-Fill Code
+              </button>
+            </div>
+            <div class="otp-alert-body">
+              Your reset verification OTP is: <strong id="otp-display-code">1234</strong>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="forgot-otp">Enter 4-Digit OTP <span class="required">*</span></label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <input type="text" id="forgot-otp" class="form-input" placeholder="Enter 4-digit code" maxlength="4" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="forgot-new-password">New Password <span class="required">*</span></label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <input type="password" id="forgot-new-password" class="form-input" placeholder="Set new password (min 4 chars)" minlength="4" required>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-auth" id="btn-reset-password" onclick="handleResetPasswordSubmit()">
+            <span>Update Password & Enter &rarr;</span>
+          </button>
+        </div>
+
+        <div class="auth-back-row">
+          <button type="button" class="auth-back-btn" onclick="switchAuthTab('signin')">
+            &larr; Back to Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CHANGE COMPANY SECRET CODE & OWNER MOBILE NUMBER -->
+  <div id="modal-secret-code" class="modal-overlay hidden">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">SECURITY CONTROL</span>
+          <h3 id="modal-secret-title">Security Control & Owner Settings</h3>
+          <p id="modal-secret-sub">Verification required for Owner Number</p>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeChangeSecretModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Step 1: Owner Verification -->
+        <div id="secret-step-1">
+          <div class="owner-notice-pill">
+            <span class="owner-icon">🛡️</span>
+            <div class="owner-text">
+              <strong>Owner Authorization Required</strong>
+              <p>An OTP will be generated for registered owner number: <strong id="secret-owner-number">+91 8334816333</strong></p>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" id="btn-owner-send-otp" onclick="handleSendOwnerOtp()">
+            <span>Send OTP to Owner Number &rarr;</span>
+          </button>
+        </div>
+
+        <!-- Step 2: OTP Verification & New Secret Code / Number -->
+        <div id="secret-step-2" style="display: none;">
+          <div class="otp-alert-card">
+            <div class="otp-alert-header">
+              <span class="otp-badge">📲 OWNER SMS VERIFICATION</span>
+              <button type="button" class="btn-copy-otp" onclick="autoFillOwnerOtp()">
+                ⚡ Auto-Fill Code
+              </button>
+            </div>
+            <div class="otp-alert-body">
+              Owner security OTP is: <strong id="owner-otp-display">1234</strong>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="owner-otp-input">Enter 4-Digit Owner OTP <span class="required">*</span></label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <input type="text" id="owner-otp-input" class="form-input" placeholder="4-digit code" maxlength="4" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new-owner-phone-input">Update Owner Mobile Number</label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <input type="tel" id="new-owner-phone-input" class="form-input" placeholder="Enter new owner number (e.g. 8334816333)">
+            </div>
+            <small class="field-hint">New owner phone number that receives future security OTPs.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="new-secret-input">New Company Secret Code</label>
+            <div class="input-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+              <input type="text" id="new-secret-input" class="form-input" placeholder="Leave blank to keep existing code" minlength="3">
+            </div>
+            <small class="field-hint">Anyone signing up for this workspace will need to provide this code.</small>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" id="btn-save-new-secret" onclick="handleSaveNewSecretCode()">
+            <span>Save & Apply Updates &rarr;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <nav class="mobile-bottom-bar" id="mobile-bottom-bar" aria-label="Mobile Navigation">
+    <button type="button" class="mobile-bottom-item active" data-tab="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="mobile-bottom-item" data-tab="leads">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Leads</span>
+      <span class="mobile-tab-badge" id="mobile-nav-leads-count">199</span>
+    </button>
+    <button type="button" class="mobile-bottom-add" id="mobile-quick-add-btn" title="Quick Add Lead">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+    <button type="button" class="mobile-bottom-item" data-tab="clients">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+      <span>Clients</span>
+      <span class="mobile-tab-badge" id="mobile-nav-clients-count">2</span>
+    </button>
+    <button type="button" class="mobile-bottom-item" id="mobile-menu-trigger">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      <span>Menu</span>
+    </button>
+  </nav>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- SUPABASE JS CLIENT CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- APP SCRIPT -->
+  <script src="app.js"></script>
+</body>
+</html>
