@@ -5111,4 +5111,66 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     updateAuthUI();
   }
+
+  // PWA Install Prompt & Service Worker Registration
+  initPwaInstaller();
 });
+
+// PWA Service Worker & Install Flow
+let deferredPrompt = null;
+
+function initPwaInstaller() {
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => {
+          console.log('✅ PWA Service Worker Registered:', reg.scope);
+        })
+        .catch((err) => {
+          console.warn('⚠️ Service Worker Registration failed:', err);
+        });
+    });
+  }
+
+  const btnInstall = document.getElementById('btn-install-pwa');
+  const btnSidebarInstall = document.getElementById('btn-sidebar-install');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent default mini-infobar on mobile Chrome
+    e.preventDefault();
+    deferredPrompt = e;
+
+    // Show Install Buttons
+    if (btnInstall) btnInstall.style.display = 'inline-flex';
+    if (btnSidebarInstall) btnSidebarInstall.style.display = 'flex';
+    console.log('💡 PWA install prompt captured and ready');
+  });
+
+  const triggerInstall = async () => {
+    if (!deferredPrompt) {
+      showToast("App install prompt is already triggered or not supported in this browser. Look for the install icon in your address bar!", "info");
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install: ${outcome}`);
+    if (outcome === 'accepted') {
+      showToast("Installing Pixel & Boutique CRM app! 🎉", "success");
+    }
+    deferredPrompt = null;
+    if (btnInstall) btnInstall.style.display = 'none';
+    if (btnSidebarInstall) btnSidebarInstall.style.display = 'none';
+  };
+
+  if (btnInstall) btnInstall.addEventListener('click', triggerInstall);
+  if (btnSidebarInstall) btnSidebarInstall.addEventListener('click', triggerInstall);
+
+  window.addEventListener('appinstalled', () => {
+    console.log('🎉 Pixel & Boutique CRM App successfully installed!');
+    showToast("Pixel CRM is installed as an app on your device! 🚀", "success");
+    if (btnInstall) btnInstall.style.display = 'none';
+    if (btnSidebarInstall) btnSidebarInstall.style.display = 'none';
+    deferredPrompt = null;
+  });
+}

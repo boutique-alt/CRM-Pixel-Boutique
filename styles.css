@@ -497,6 +497,41 @@ body {
   transform: scale(0.96);
 }
 
+/* PWA Install Button in Topbar & Sidebar */
+.btn-install-app {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 15px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.01em;
+}
+
+.btn-install-app:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+  background: linear-gradient(135deg, #4338ca 0%, #312e81 100%);
+}
+
+.btn-sidebar-install {
+  background: rgba(79, 70, 229, 0.1) !important;
+  color: #4f46e5 !important;
+  border: 1px dashed rgba(79, 70, 229, 0.35) !important;
+  margin: 6px 0 !important;
+}
+
+.btn-sidebar-install:hover {
+  background: rgba(79, 70, 229, 0.18) !important;
+}
+
 .topbar-date-pill {
   display: flex;
   align-items: center;
