@@ -24,7 +24,7 @@ function initSupabase() {
 
 // Storage Keys (Instant Local Fallback & Offline Cache)
 const STORAGE_LEADS = 'pixel_crm_leads_v2';
-const STORAGE_CLIENTS = 'pixel_crm_clients_v2';
+const STORAGE_CLIENTS = 'pixel_crm_clients_v3';
 const STORAGE_USERS = 'pixel_crm_users_v1';
 const STORAGE_CURRENT_USER = 'pixel_crm_current_user_v1';
 
@@ -2653,33 +2653,268 @@ const DEFAULT_LEADS = [
 
 const DEFAULT_CLIENTS = [
   {
-    id: "client-1",
-    company: "Apex Footwear Store",
-    contactName: "Sultan Mahmud",
-    contactNumber: "01733-445566",
-    requirement: "Basic Website",
-    dealType: "One-Time",
-    recurringCycle: null,
-    becameClientAt: "2026-10-10 03:30:15 PM",
-    dealAmount: 50000,
-    payments: [
-      { id: "p1", amount: 10000, date: "2026-10-10", method: "Bank Transfer", note: "1st installment (Advance)" },
-      { id: "p2", amount: 5000, date: "2026-10-13", method: "bKash / Nagad", note: "2nd payment" }
-    ]
+    "id": "pixel-client-1",
+    "company": "S Light",
+    "contactName": "S Light",
+    "contactNumber": "N/A",
+    "requirement": "Basic Website",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
   },
   {
-    id: "client-2",
-    company: "Nexus Healthcare Diagnostic",
-    contactName: "Dr. Arif Chowdhury",
-    contactNumber: "01711-998800",
-    requirement: "SaaS & CRM Systems",
-    dealType: "Regular",
-    recurringCycle: "Half-Yearly",
-    becameClientAt: "2026-10-08 12:15:40 PM",
-    dealAmount: 35000,
-    payments: [
-      { id: "p3", amount: 35000, date: "2026-10-08", method: "Bank Transfer", note: "Full upfront payment" }
-    ]
+    "id": "pixel-client-2",
+    "company": "Anmoar",
+    "contactName": "Anmoar",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-3",
+    "company": "Gentian",
+    "contactName": "Gentian",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-4",
+    "company": "Gaofal",
+    "contactName": "Gaofal",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-5",
+    "company": "Tribal Trim",
+    "contactName": "Tribal Trim",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-6",
+    "company": "Durga Gold",
+    "contactName": "Durga Gold",
+    "contactNumber": "N/A",
+    "requirement": "SaaS & CRM Systems",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-7",
+    "company": "Healthy Buddy",
+    "contactName": "Healthy Buddy",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-8",
+    "company": "EDLCare",
+    "contactName": "EDLCare",
+    "contactNumber": "N/A",
+    "requirement": "Basic Website",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-9",
+    "company": "Educus",
+    "contactName": "Educus",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-10",
+    "company": "Ananya Wellness",
+    "contactName": "Ananya Wellness",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-11",
+    "company": "Avon",
+    "contactName": "Avon Manoj Kumar",
+    "contactNumber": "98712 19383",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-12",
+    "company": "Alan Baptist",
+    "contactName": "Alan Baptist",
+    "contactNumber": "N/A",
+    "requirement": "Basic Website",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-13",
+    "company": "NVS",
+    "contactName": "NVS",
+    "contactNumber": "N/A",
+    "requirement": "Corporate Brochure",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-14",
+    "company": "Pakka Pic Spot",
+    "contactName": "Pakka Pic Spot",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-15",
+    "company": "CaochedBySouvik",
+    "contactName": "Souvik",
+    "contactNumber": "N/A",
+    "requirement": "Basic Website",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-16",
+    "company": "Presales",
+    "contactName": "Presales",
+    "contactNumber": "N/A",
+    "requirement": "Corporate Brochure",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-17",
+    "company": "P Edge",
+    "contactName": "Personality Edge",
+    "contactNumber": "N/A",
+    "requirement": "Basic Website",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-18",
+    "company": "Optimum",
+    "contactName": "Rajesh Agarwal",
+    "contactNumber": "8013747563",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-19",
+    "company": "Arohi",
+    "contactName": "Arohi",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-20",
+    "company": "BFSL",
+    "contactName": "BFSL",
+    "contactNumber": "N/A",
+    "requirement": "Other",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-21",
+    "company": "Debesh Bagchi",
+    "contactName": "Debesh Bagchi",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
+  },
+  {
+    "id": "pixel-client-22",
+    "company": "UVC",
+    "contactName": "UVC",
+    "contactNumber": "N/A",
+    "requirement": "Social Media (Organic)",
+    "dealType": "One-Time",
+    "recurringCycle": null,
+    "becameClientAt": "2026-11-01 10:00:00 AM",
+    "dealAmount": 0,
+    "payments": []
   }
 ];
 
@@ -3651,9 +3886,27 @@ function loadDataFromLocal() {
     } else {
       // Pixel Workspace
       const storedLeads = localStorage.getItem(leadsKey) || localStorage.getItem(STORAGE_LEADS);
-      const storedClients = localStorage.getItem(clientsKey) || localStorage.getItem(STORAGE_CLIENTS) || localStorage.getItem('pixel_crm_clients_v1');
+      const storedClients = localStorage.getItem('pixel_crm_clients_v3') || localStorage.getItem(clientsKey);
       leads = storedLeads ? JSON.parse(storedLeads) : JSON.parse(JSON.stringify(DEFAULT_LEADS));
-      clients = storedClients ? JSON.parse(storedClients) : JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+      
+      // Auto-migrate if stored clients contain old sample records (Apex / Nexus)
+      if (storedClients) {
+        try {
+          const parsed = JSON.parse(storedClients);
+          const hasOld = parsed.some(c => c.id === 'client-1' || c.company === 'Apex Footwear Store');
+          if (hasOld) {
+            clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+            saveData();
+          } else {
+            clients = parsed;
+          }
+        } catch (err) {
+          clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+        }
+      } else {
+        clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+        saveData();
+      }
     }
   } catch (e) {
     console.error("Failed to parse workspace local data:", e);
