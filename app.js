@@ -23,10 +23,11 @@ function initSupabase() {
 }
 
 // Storage Keys (Instant Local Fallback & Offline Cache)
-const STORAGE_LEADS = 'pixel_crm_leads_v3';
-const STORAGE_CLIENTS = 'pixel_crm_clients_v3';
+const STORAGE_LEADS = 'pixel_crm_leads_v4';
+const STORAGE_CLIENTS = 'pixel_crm_clients_v4';
 const STORAGE_USERS = 'pixel_crm_users_v1';
 const STORAGE_CURRENT_USER = 'pixel_crm_current_user_v1';
+const CRM_DATA_VERSION = 'pixel_crm_data_sync_v4';
 
 // Default Requirements / Services List
 const REQUIREMENTS = [
@@ -4066,45 +4067,32 @@ function loadDataFromLocal() {
       leads = storedLeads ? JSON.parse(storedLeads) : JSON.parse(JSON.stringify(DEFAULT_BOUTIQUE_LEADS));
       clients = storedClients ? JSON.parse(storedClients) : JSON.parse(JSON.stringify(DEFAULT_BOUTIQUE_CLIENTS));
     } else {
-      // Pixel Workspace
-      const storedLeads = localStorage.getItem('pixel_crm_leads_v3') || localStorage.getItem(leadsKey);
-      const storedClients = localStorage.getItem('pixel_crm_clients_v3') || localStorage.getItem(clientsKey);
-      
-      // Auto-migrate if stored leads contain old sample data (e.g. Bhoomi / Sandep Pal)
-      if (storedLeads) {
-        try {
-          const parsed = JSON.parse(storedLeads);
-          const hasOld = parsed.some(l => l.company === 'Bhoomi' || l.company === 'Sandep Pal');
-          if (hasOld) {
-            leads = JSON.parse(JSON.stringify(DEFAULT_LEADS));
-            saveData();
-          } else {
-            leads = parsed;
-          }
-        } catch (err) {
-          leads = JSON.parse(JSON.stringify(DEFAULT_LEADS));
-        }
-      } else {
+      // Pixel Workspace: Cross-device data enforcement
+      const syncStatus = localStorage.getItem(CRM_DATA_VERSION);
+      if (syncStatus !== 'synced_22_clients_213_leads') {
+        // Enforce latest 213 leads and 22 clients across all devices
         leads = JSON.parse(JSON.stringify(DEFAULT_LEADS));
+        clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+        localStorage.setItem(CRM_DATA_VERSION, 'synced_22_clients_213_leads');
+        localStorage.setItem('pixel_crm_leads_v4', JSON.stringify(leads));
+        localStorage.setItem('pixel_crm_clients_v4', JSON.stringify(clients));
+        saveData();
+        return;
+      }
+
+      const storedLeads = localStorage.getItem('pixel_crm_leads_v4') || localStorage.getItem(leadsKey);
+      const storedClients = localStorage.getItem('pixel_crm_clients_v4') || localStorage.getItem(clientsKey);
+
+      leads = storedLeads ? JSON.parse(storedLeads) : JSON.parse(JSON.stringify(DEFAULT_LEADS));
+      clients = storedClients ? JSON.parse(storedClients) : JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+
+      // Guard check: ensure clients is at least 22 and leads is at least 213
+      if (!Array.isArray(clients) || clients.length < DEFAULT_CLIENTS.length) {
+        clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
         saveData();
       }
-      
-      // Auto-migrate if stored clients contain old sample records (Apex / Nexus)
-      if (storedClients) {
-        try {
-          const parsed = JSON.parse(storedClients);
-          const hasOld = parsed.some(c => c.id === 'client-1' || c.company === 'Apex Footwear Store');
-          if (hasOld) {
-            clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
-            saveData();
-          } else {
-            clients = parsed;
-          }
-        } catch (err) {
-          clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
-        }
-      } else {
-        clients = JSON.parse(JSON.stringify(DEFAULT_CLIENTS));
+      if (!Array.isArray(leads) || leads.length < DEFAULT_LEADS.length) {
+        leads = JSON.parse(JSON.stringify(DEFAULT_LEADS));
         saveData();
       }
     }

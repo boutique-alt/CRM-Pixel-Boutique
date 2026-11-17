@@ -1,5 +1,5 @@
 // Service Worker for Pixel CRM PWA (Offline & Fast Cache)
-const CACHE_NAME = 'pixel-crm-cache-v2';
+const CACHE_NAME = 'pixel-crm-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
